@@ -8,3 +8,4 @@ werkzeug
 paddleocr
 gunicorn
 python-dotenv
+google-genai

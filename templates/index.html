@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Based Anemia Detection Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f4f7fb;
+        color: #1e293b;
+      }
+      
+      body {
+        overflow: hidden;
+      }
+      
+      .app-shell {
+        display: flex;
+        height: 100vh;
+        width: 100%;
+      }
+      
+      .sidebar {
+        width: 290px;
+        background: linear-gradient(180deg, #0f172a, #111827);
+        color: white;
+        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        overflow: hidden;
+      }
+      
+      .brand-card {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 18px;
+      }
+      
+      .brand-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      
+      .brand-subtitle {
+        font-size: 12px;
+        color: #cbd5e1;
+        line-height: 1.5;
+      }
+      
+      .new-analysis-btn {
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 13px 16px;
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+      }
+      
+      .new-analysis-btn:hover {
+        transform: translateY(-1px);
+      }
+      
+      .side-section-title {
+        font-size: 12px;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+      }
+      
+      .nav-list,
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .nav-item,
+      .history-item {
+        border: none;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        border-radius: 14px;
+        padding: 12px 14px;
+        text-align: left;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s ease;
+      }
+      
+      .nav-item:hover,
+      .history-item:hover {
+        background: rgba(255, 255, 255, 0.11);
+      }
+      
+      .history-wrap {
+        flex: 1;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      
+      .sidebar-footer {
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 12px;
+        color: #94a3b8;
+      }
+      
+      .main-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 100vh;
+        overflow: hidden;
+      }
+      
+      .topbar {
+        height: 82px;
+        min-height: 82px;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid #dbe5f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        flex-shrink: 0;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      }
+      
+      .topbar h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+      }
+      
+      .topbar p {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: #64748b;
+        letter-spacing: 0.01em;
+      }
+      
+      .topbar-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      
+      .top-btn {
+        border: 1px solid #dbe3ee;
+        background: rgba(255, 255, 255, 0.88);
+        color: #0f172a;
+        border-radius: 14px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.22s ease;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      }
+      
+      .top-btn:hover {
+        background: #f8fbff;
+        border-color: #bfd3ea;
+        transform: translateY(-1px);
+      }
+      
+      .main-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+      }
+      
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1.55fr 0.95fr;
+        gap: 22px;
+        align-items: start;
+      }
+      
+      .main-column,
+      .side-column {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      
+      .panel {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.06);
+      }
+      
+      .hero-panel {
+        padding: 30px;
+        background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.1), transparent 24%), linear-gradient(135deg, #eff6ff, #f8fafc 55%, #eef2ff);
+        border: 1px solid #dbeafe;
+      }
+      
+      .hero-badge {
+        display: inline-block;
+        background: rgba(37, 99, 235, 0.1);
+        color: #1d4ed8;
+        border: 1px solid rgba(37, 99, 235, 0.14);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        letter-spacing: 0.03em;
+      }
+      
+      .hero-title {
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1.18;
+        margin-bottom: 12px;
+        color: #0f172a;
+        letter-spacing: -0.03em;
+      }
+      
+      .hero-text {
+        color: #475569;
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 780px;
+      }
+      
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 22px;
+      }
+      
+      .feature-card {
+        border: 1px solid #dbeafe;
+        background: rgba(255, 255, 255, 0.84);
+        border-radius: 22px;
+        padding: 22px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      }
+      
+      .feature-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 14px;
+        background: linear-gradient(135deg, #2563eb, #06b6d4);
+        color: white;
+        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+      }
+      
+      .feature-card h3 {
+        margin: 0 0 8px;
+        font-size: 19px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      
+      .feature-card p {
+        margin: 0 0 14px;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      
+      .feature-card button {
+        border: none;
+        border-radius: 14px;
+        padding: 11px 15px;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.22s ease;
+      }
+      
+      .feature-card button:hover {
+        transform: translateY(-1px);
+        opacity: 0.96;
+      }
+      
+      .section-panel {
+        padding: 24px;
+      }
+      
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      
+      .section-title {
+        font-size: 21px;
+        font-weight: 800;
+        margin: 0;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+      }
+      
+      .section-subtitle {
+        margin: 6px 0 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      
+      .mode-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      
+      .mode-tab {
+        border: 1px solid #dbe3ee;
+        background: #f8fafc;
+        color: #334155;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      
+      .mode-tab.active {
+        background: #0f172a;
+        color: white;
+        border-color: #0f172a;
+      }
+      
+      .mode-pane {
+        display: none;
+      }
+      
+      .mode-pane.active {
+        display: block;
+      }
+      
+      .step-shell {
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 18px;
+        padding: 18px;
+      }
+      
+      .step-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      
+      .step-pill {
+        background: #0f172a;
+        color: white;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      
+      .progress {
+        height: 10px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+      }
+      
+      .progress-bar-custom {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(135deg, #2563eb, #06b6d4);
+        transition: width 0.25s ease;
+      }
+      
+      .question-box {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 14px;
+      }
+      
+      .question-label {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 6px;
+      }
+      
+      .question-text {
+        font-size: 19px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      
+      .input-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      
+      .answer-input,
+      .answer-select {
+        flex: 1;
+        min-height: 48px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 15px;
+        outline: none;
+        background: white;
+      }
+      
+      .answer-input:focus,
+      .answer-select:focus {
+        border-color: #2563eb;
+      }
+      
+      .primary-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, #2563eb, #06b6d4);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      
+      .secondary-btn {
+        border: 1px solid #dbe3ee;
+        border-radius: 14px;
+        padding: 12px 16px;
+        background: white;
+        color: #0f172a;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      
+      .helper-note {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 12px;
+        line-height: 1.6;
+      }
+      
+      .upload-area {
+        border: 2px dashed #bfdbfe;
+        background: #f8fbff;
+        border-radius: 18px;
+        padding: 26px;
+        text-align: center;
+      }
+      
+      .upload-area h4 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 800;
+      }
+      
+      .upload-area p {
+        margin: 0 0 12px;
+        color: #64748b;
+        font-size: 14px;
+      }
+      
+      .upload-file-name {
+        margin-top: 10px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      
+      .stat-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fbff);
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+      }
+      
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.07);
+      }
+      
+      .stat-label {
+        color: #64748b;
+        font-size: 12px;
+        margin-bottom: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+      }
+      
+      .values-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      
+      .value-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 16px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.03);
+      }
+      
+      .value-box small {
+        display: block;
+        color: #64748b;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      
+      .value-box strong {
+        font-size: 19px;
+        color: #0f172a;
+        font-weight: 800;
+      }
+      
+      .summary-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 20px;
+        background: linear-gradient(180deg, #f8fbff, #f8fafc);
+        color: #334155;
+        line-height: 1.9;
+        font-size: 14px;
+      }
+      
+      .guide-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      
+      .guide-tab {
+        border: 1px solid #dbe3ee;
+        background: white;
+        color: #334155;
+        border-radius: 999px;
+        padding: 10px 15px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.22s ease;
+      }
+      
+      .guide-tab.active {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: white;
+        border-color: #0f172a;
+      }
+      
+      .guide-content {
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 20px;
+        background: linear-gradient(180deg, #f8fbff, #f8fafc);
+        line-height: 1.85;
+        color: #334155;
+        min-height: 150px;
+        font-size: 14px;
+      }
+      
+      .assistant-panel {
+        padding: 24px;
+      }
+      
+      .assistant-card {
+        border: 1px solid #dbeafe;
+        background: linear-gradient(180deg, #eff6ff, #f8fbff);
+        border-radius: 22px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      
+      .assistant-card h4 {
+        margin: 0 0 8px;
+        font-size: 19px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      
+      .assistant-card p {
+        margin: 0;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      
+      .assistant-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .assistant-message {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 16px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.03);
+      }
+      
+      .assistant-message strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #0f172a;
+      }
+      
+      .assistant-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      
+      .assistant-chip {
+        border: 1px solid #dbe3ee;
+        background: white;
+        color: #0f172a;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.22s ease;
+      }
+      
+      .assistant-chip:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+      }
+      
+      .status-box {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, #ecfeff, #f0fdfa);
+        border: 1px solid #bae6fd;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.7;
+      }
+      
+      .hidden {
+        display: none !important;
+      }
+      
+      @media (max-width: 1200px) {
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 900px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      
+        .values-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        body {
+          overflow: auto;
+        }
+      
+        .app-shell {
+          display: block;
+          height: auto;
+        }
+      
+        .sidebar {
+          width: 100%;
+          height: auto;
+        }
+      
+        .main-panel {
+          height: auto;
+        }
+      
+        .topbar {
+          padding: 14px;
+          height: auto;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 14px;
+        }
+      
+        .main-scroll {
+          padding: 14px;
+        }
+      
+        .stats-grid,
+        .values-grid {
+          grid-template-columns: 1fr;
+        }
+      
+        .input-row {
+          flex-direction: column;
+        }
+      
+        .answer-input,
+        .answer-select,
+        .primary-btn,
+        .secondary-btn {
+          width: 100%;
+        }
+      }
+      
+      .history-wrap::-webkit-scrollbar,
+      .main-scroll::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      .history-wrap::-webkit-scrollbar-thumb,
+      .main-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-card">
+          <div class="brand-title">AI Anemia Detection in One Platform</div>
+          <div class="brand-subtitle">Smart CBC screening, report analysis, result interpretation, and supportive intelligent medical guidance </div>
+        </div>
+
+        <button class="new-analysis-btn" id="newAnalysisBtn">+ New Analysis</button>
+
+        <div>
+          <div class="side-section-title">Navigation</div>
+          <div class="nav-list">
+            <button class="nav-item">Dashboard</button>
+            <button class="nav-item">Manual Analysis</button>
+            <button class="nav-item">Report Upload</button>
+            <button class="nav-item">Results</button>
+            <button class="nav-item">Guidance</button>
+          </div>
+        </div>
+
+        <div class="history-wrap">
+          <div class="side-section-title">Saved Sessions</div>
+          <div class="history-list" id="historyList">
+            <button class="history-item">No saved sessions yet</button>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">AI-Based Healthcare Platform</div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <h1>Anemia Detection & Guidance</h1>
+            <p>AI-assisted screening platform for manual CBC analysis and lab report understanding</p>
+          </div>
+
+          <div class="topbar-actions">
+            <button class="top-btn" id="voiceToggleBtn">Voice: On</button>
+            <button class="top-btn" id="shareBtn">Share</button>
+            <button class="top-btn">System Ready</button>
+            <button class="top-btn" onclick="window.location.href='/logout'">Logout</button>
+          </div>
+        </header>
+
+        <div class="main-scroll">
+          <div class="content-grid">
+            <div class="main-column">
+              <section class="panel hero-panel">
+                <div class="hero-badge">AI Healthcare Assistant</div>
+                <div class="hero-title">Welcome to the AI-Based Anemia Detection & Guidance Platform</div>
+                <div class="hero-text">This platform helps analyze CBC values, upload hematology reports, screen for possible anemia patterns, and provide supportive guidance like severity explanation, precautions, risks, and doctor advice.</div>
+
+                <div class="feature-grid">
+                  <div class="feature-card">
+                    <div class="feature-icon">🩸</div>
+                    <h3>Manual CBC Entry</h3>
+                    <p>Enter CBC-related values one by one through a guided premium workflow with validation and voice support.</p>
+                    <button id="startManualFromHero">Start Manual Analysis</button>
+                  </div>
+
+                  <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>Lab Report Upload</h3>
+                    <p>Upload a CBC report image or PDF and let the system extract values and generate the screening result.</p>
+                    <button id="startUploadFromHero">Start Report Upload</button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="panel section-panel">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Input Workspace</h2>
+                    <p class="section-subtitle">Choose the input method and continue the analysis process</p>
+                  </div>
+
+                  <div class="mode-tabs">
+                    <button class="mode-tab active" data-mode="manual">Manual Entry</button>
+                    <button class="mode-tab" data-mode="upload">Report Upload</button>
+                  </div>
+                </div>
+
+                <div class="mode-pane active" id="manualMode">
+                  <div class="step-shell">
+                    <div class="step-top">
+                      <div class="step-pill" id="stepPill">Step 1 of 5</div>
+                      <div style="flex:1; min-width:180px;">
+                        <div class="progress">
+                          <div class="progress-bar-custom" id="progressBar"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="question-box">
+                      <div class="question-label">Current Guided Step</div>
+                      <div class="question-text" id="questionText">Click “Start Manual Analysis” to begin guided entry</div>
+                    </div>
+
+                    <div class="input-row">
+                      <input type="text" id="answerInput" class="answer-input" placeholder="Type the requested value here" disabled />
+
+                      <select id="genderSelect" class="answer-select hidden">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+
+                      <button class="primary-btn" id="startManualBtn">Start Manual Analysis</button>
+                      <button class="primary-btn hidden" id="nextStepBtn">Submit Step</button>
+                      <button class="secondary-btn" id="resetManualBtn">Reset</button>
+                    </div>
+
+                    <div class="helper-note" id="manualNote">The system will request values step by step and move forward only after valid input.</div>
+                  </div>
+                </div>
+
+                <div class="mode-pane" id="uploadMode">
+                  <div class="upload-area">
+                    <h4>Upload CBC Report</h4>
+                    <p>Supported formats: JPG, PNG, PDF</p>
+                    <input type="file" id="reportFile" class="form-control" accept=".jpg,.jpeg,.png,.pdf" />
+                    <div class="upload-file-name" id="uploadFileName">No file selected</div>
+                    <div style="margin-top:16px;">
+                      <button class="primary-btn" id="analyzeUploadBtn">Analyze Report</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="panel section-panel">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Analysis Dashboard</h2>
+                    <p class="section-subtitle">Prediction, severity, pattern, and confidence overview</p>
+                  </div>
+                </div>
+
+                <div class="stats-grid">
+                  <div class="stat-card">
+                    <div class="stat-label">Prediction</div>
+                    <div class="stat-value" id="predictionCard">--</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-label">Severity</div>
+                    <div class="stat-value" id="severityCard">--</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-label">Likely Type</div>
+                    <div class="stat-value" id="typeCard">--</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-label">Result Status</div>
+                    <div class="stat-value" id="confidenceCard">--</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="panel section-panel">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">CBC Values Overview</h2>
+                    <p class="section-subtitle">Entered or extracted values appear here after analysis</p>
+                  </div>
+                </div>
+
+                <div class="values-grid">
+                  <div class="value-box">
+                    <small>Hemoglobin</small><strong id="hbValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>MCV</small><strong id="mcvValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>MCH</small><strong id="mchValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>MCHC</small><strong id="mchcValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>RBC</small><strong id="rbcValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>PCV</small><strong id="pcvValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>RDW</small><strong id="rdwValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>Gender</small><strong id="genderValue">--</strong>
+                  </div>
+                  <div class="value-box">
+                    <small>Platelets / WBC</small><strong id="otherValue">--</strong>
+                  </div>
+                </div>
+              </section>
+
+              <section class="panel section-panel">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Clinical Summary</h2>
+                    <p class="section-subtitle">AI-style explanation of the screening result</p>
+                  </div>
+                </div>
+
+                <div class="summary-box" id="summaryBox">No analysis has been performed yet. Once you submit manual values or upload a report, the summary will appear here.</div>
+              </section>
+
+              <section class="panel section-panel">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Medical Guidance</h2>
+                    <p class="section-subtitle">Supportive guidance based on the current result</p>
+                  </div>
+                </div>
+
+                <div class="guide-tabs">
+                  <button class="guide-tab active" data-guide="precautions">Precautions</button>
+                  <button class="guide-tab" data-guide="doctor">Doctor Advice</button>
+                  <button class="guide-tab" data-guide="risks">Risks</button>
+                  <button class="guide-tab" data-guide="summary">Simple Summary</button>
+                </div>
+
+                <div class="guide-content" id="guideContent">Guidance content will appear here after analysis. You can use the tabs to view different support sections.</div>
+              </section>
+            </div>
+
+            <div class="side-column">
+              <section class="panel assistant-panel">
+                <div class="assistant-card">
+                  <h4>AI Support Assistant</h4>
+                  <p>This panel gives supportive guidance like a helpful assistant. It can guide the input process, confirm analysis status, and suggest what to check next.</p>
+                </div>
+
+                <div class="assistant-list" id="assistantList">
+                  <div class="assistant-message">
+                    <strong>System Guidance</strong>
+                    Welcome. Choose manual analysis or report upload to begin the screening process.
+                  </div>
+                </div>
+
+                <div class="assistant-actions">
+                  <button class="assistant-chip" onclick="showGuide('precautions')">Precautions</button>
+                  <button class="assistant-chip" onclick="showGuide('doctor')">Doctor Advice</button>
+                  <button class="assistant-chip" onclick="showGuide('risks')">Risks</button>
+                  <button class="assistant-chip" onclick="showGuide('summary')">Summary</button>
+                </div>
+              </section>
+
+              <section class="panel section-panel">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">System Status</h2>
+                    <p class="section-subtitle">Current session information</p>
+                  </div>
+                </div>
+
+                <div class="status-box" id="statusBox">Ready to begin analysis. No active result yet.</div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modeTabs = document.querySelectorAll('.mode-tab')
+        const modePanes = document.querySelectorAll('.mode-pane')
+        const guideTabs = document.querySelectorAll('.guide-tab')
+        const navButtons = document.querySelectorAll('.nav-item')
+      
+        const questionText = document.getElementById('questionText')
+        const stepPill = document.getElementById('stepPill')
+        const progressBar = document.getElementById('progressBar')
+        const answerInput = document.getElementById('answerInput')
+        const genderSelect = document.getElementById('genderSelect')
+        const startManualBtn = document.getElementById('startManualBtn')
+        const nextStepBtn = document.getElementById('nextStepBtn')
+        const resetManualBtn = document.getElementById('resetManualBtn')
+        const manualNote = document.getElementById('manualNote')
+        const reportFile = document.getElementById('reportFile')
+        const uploadFileName = document.getElementById('uploadFileName')
+        const assistantList = document.getElementById('assistantList')
+        const historyList = document.getElementById('historyList')
+        const voiceToggleBtn = document.getElementById('voiceToggleBtn')
+        const analyzeUploadBtn = document.getElementById('analyzeUploadBtn')
+        const newAnalysisBtn = document.getElementById('newAnalysisBtn')
+        const startManualFromHero = document.getElementById('startManualFromHero')
+        const startUploadFromHero = document.getElementById('startUploadFromHero')
+        const shareBtn = document.getElementById('shareBtn')
+      
+        let voiceEnabled = true
+        let currentStep = -1
+        let currentGuideKey = 'precautions'
+        let savedSessions = JSON.parse(localStorage.getItem('premium_anemia_sessions') || '[]')
+      
+        let patientData = {
+          hemoglobin: null,
+          mcv: null,
+          mch: null,
+          mchc: null,
+          gender: null,
+          rbc: null,
+          pcv: null,
+          rdw: null,
+          wbc: null,
+          platelets: null,
+          age: null
+        }
+      
+        const manualSteps = [
+          { key: 'hemoglobin', label: 'Hemoglobin', question: 'Enter Hemoglobin value (g/dL)', min: 1, max: 25, placeholder: 'Example: 9.2', required: true },
+          { key: 'rbc', label: 'RBC', question: 'Enter RBC value', min: 1, max: 10, placeholder: 'Example: 4.2', required: false },
+          { key: 'wbc', label: 'WBC', question: 'Enter WBC value', min: 1000, max: 50000, placeholder: 'Example: 7600', required: false },
+          { key: 'platelets', label: 'Platelets', question: 'Enter Platelets value', min: 10000, max: 1000000, placeholder: 'Example: 250000', required: false },
+          { key: 'mcv', label: 'MCV', question: 'Enter MCV value (fL)', min: 50, max: 150, placeholder: 'Example: 72', required: false },
+          { key: 'mch', label: 'MCH', question: 'Enter MCH value (pg)', min: 10, max: 40, placeholder: 'Example: 23', required: false },
+          { key: 'mchc', label: 'MCHC', question: 'Enter MCHC value (g/dL)', min: 10, max: 45, placeholder: 'Example: 30', required: false },
+          { key: 'pcv', label: 'PCV', question: 'Enter PCV value (%) if available', min: 10, max: 70, placeholder: 'Example: 36', required: false },
+          { key: 'rdw', label: 'RDW', question: 'Enter RDW value (%) if available', min: 5, max: 30, placeholder: 'Example: 14', required: false },
+          { key: 'gender', label: 'Gender', question: 'Select Gender', type: 'select', required: true }
+        ]
+      
+        const defaultGuideText = {
+          precautions: 'Guidance content will appear here after analysis.',
+          doctor: 'Doctor advice will appear here after analysis.',
+          risks: 'Risk explanation will appear here after analysis.',
+          summary: 'Simple summary will appear here after analysis.'
+        }
+      
+        let guideText = { ...defaultGuideText }
+      
+        function safeSetText(id, value) {
+          const el = document.getElementById(id)
+          if (el) el.textContent = value
+        }
+      
+        function speak(text) {
+          if (!voiceEnabled || !('speechSynthesis' in window) || !text) return
+          window.speechSynthesis.cancel()
+          const utterance = new SpeechSynthesisUtterance(text)
+          utterance.rate = 1
+          utterance.pitch = 1
+          window.speechSynthesis.speak(utterance)
+        }
+      
+        function addAssistantMessage(title, text) {
+          if (!assistantList) return
+          const box = document.createElement('div')
+          box.className = 'assistant-message'
+          box.innerHTML = `<strong>${title}</strong>${text ? `<div>${text}</div>` : ''}`
+          assistantList.prepend(box)
+        }
+      
+        function getGenderThreshold(gender) {
+          return String(gender || '').toLowerCase() === 'male' ? 13 : 12
+        }
+      
+        function formatGender(value) {
+          if (!value) return '--'
+          const v = String(value).toLowerCase()
+          return v.charAt(0).toUpperCase() + v.slice(1)
+        }
+      
+        function setMode(mode) {
+          modeTabs.forEach((tab) => {
+            tab.classList.toggle('active', tab.dataset.mode === mode)
+          })
+      
+          modePanes.forEach((pane) => {
+            pane.classList.toggle('active', pane.id === `${mode}Mode`)
+          })
+      
+          safeSetText('statusBox', mode === 'manual' ? 'Manual entry mode selected.' : 'Report upload mode selected.')
+        }
+      
+        function updateProgress() {
+          if (!stepPill || !progressBar) return
+      
+          if (currentStep < 0) {
+            stepPill.textContent = `Step 1 of ${manualSteps.length}`
+            progressBar.style.width = '0%'
+            return
+          }
+      
+          const current = Math.min(currentStep + 1, manualSteps.length)
+          stepPill.textContent = `Step ${current} of ${manualSteps.length}`
+          progressBar.style.width = `${(current / manualSteps.length) * 100}%`
+        }
+      
+        function resetCardsAndGuides() {
+          safeSetText('predictionCard', '--')
+          safeSetText('severityCard', '--')
+          safeSetText('typeCard', '--')
+          safeSetText('confidenceCard', '--')
+          safeSetText('summaryBox', 'No analysis has been performed yet. Once you submit manual values or upload a report, the summary will appear here.')
+      
+          guideText = { ...defaultGuideText }
+          showGuide(currentGuideKey)
+      
+          const severityCard = document.getElementById('severityCard')
+          const typeCard = document.getElementById('typeCard')
+          const confidenceCard = document.getElementById('confidenceCard')
+      
+          if (severityCard && severityCard.parentElement) severityCard.parentElement.style.display = 'block'
+          if (typeCard && typeCard.parentElement) typeCard.parentElement.style.display = 'block'
+          if (confidenceCard && confidenceCard.parentElement) confidenceCard.parentElement.style.display = 'none'
+        }
+      
+        function showGuide(type) {
+          currentGuideKey = type
+          guideTabs.forEach((tab) => {
+            tab.classList.toggle('active', tab.dataset.guide === type)
+          })
+          safeSetText('guideContent', guideText[type] || 'No content available.')
+        }
+      
+        function renderHistory() {
+          if (!historyList) return
+      
+          historyList.innerHTML = ''
+          if (!savedSessions.length) {
+            historyList.innerHTML = `<button class="history-item">No saved sessions yet</button>`
+            return
+          }
+      
+          savedSessions.forEach((item) => {
+            const btn = document.createElement('button')
+            btn.className = 'history-item'
+            btn.textContent = item.title
+            btn.addEventListener('click', () => {
+              updateResultDashboard(item.result || {}, item.values || {}, [])
+              safeSetText('statusBox', `Loaded saved session: ${item.title}`)
+              addAssistantMessage('Saved Session', `Loaded previous session: ${item.title}`)
+            })
+            historyList.appendChild(btn)
+          })
+        }
+      
+        function saveSession(sessionData) {
+          const session = {
+            id: Date.now(),
+            title: sessionData.title,
+            result: sessionData.result,
+            values: sessionData.values
+          }
+      
+          savedSessions.unshift(session)
+          savedSessions = savedSessions.slice(0, 8)
+          localStorage.setItem('premium_anemia_sessions', JSON.stringify(savedSessions))
+          renderHistory()
+        }
+      
+        function validateStepValue(step, value) {
+          if (step.type === 'select') {
+            if (!step.required && !value) return true
+            return value === 'Male' || value === 'Female'
+          }
+      
+          if (!step.required && value === '') return true
+      
+          const num = parseFloat(value)
+          if (Number.isNaN(num)) return false
+          if (step.min !== undefined && num < step.min) return false
+          if (step.max !== undefined && num > step.max) return false
+          return true
+        }
+      
+        function getTypeFromIndices(values) {
+          const hb = values.hemoglobin != null ? parseFloat(values.hemoglobin) : null
+          const mcv = values.mcv != null ? parseFloat(values.mcv) : null
+          const mch = values.mch != null ? parseFloat(values.mch) : null
+          const mchc = values.mchc != null ? parseFloat(values.mchc) : null
+          const gender = String(values.gender || '').toLowerCase()
+      
+          if (hb == null || Number.isNaN(hb)) return 'Unable to classify'
+      
+          const threshold = gender === 'male' ? 13 : 12
+          const hasAnemia = hb < threshold
+      
+          if (!hasAnemia) return 'No further classification required'
+      
+          if (mcv != null && !Number.isNaN(mcv)) {
+            if (mcv < 80) {
+              if ((mch != null && mch < 27) || (mchc != null && mchc < 32)) {
+                return 'Microcytic hypochromic anemia pattern'
+              }
+              return 'Microcytic anemia pattern'
+            }
+            if (mcv > 100) return 'Macrocytic anemia pattern'
+            return 'Normocytic anemia pattern'
+          }
+      
+          if (mch != null && mch < 27) return 'Possible hypochromic anemia pattern'
+          return 'Unable to classify'
+        }
+      
+        function getCommonType(type) {
+          const t = String(type || '').toLowerCase()
+      
+          if (t.includes('microcytic')) return 'Iron Deficiency Anemia'
+          if (t.includes('macrocytic')) return 'Vitamin Deficiency Anemia'
+          if (t.includes('normocytic')) return 'Anemia of Chronic Disease'
+      
+          return 'Unable to determine'
+        }
+      
+        function getSeverityFromHb(hb, gender = '') {
+          if (hb == null || Number.isNaN(hb)) return '--'
+          const threshold = getGenderThreshold(gender)
+          if (hb >= threshold) return 'Normal'
+          if (hb < 7) return 'Severe'
+          if (hb < 10) return 'Moderate'
+          return 'Mild'
+        }
+      
+        function buildGuidance(result, values, missingFields = []) {
+          let hasAnemia = false
+      
+          if (typeof result?.has_anemia === 'boolean') {
+            hasAnemia = result.has_anemia
+          } else if (typeof result?.prediction === 'string') {
+            const p = result.prediction.toLowerCase()
+            hasAnemia = p.includes('anemia') && !p.includes('no anemia')
+          } else {
+            const hb = values.hemoglobin != null ? parseFloat(values.hemoglobin) : null
+            const threshold = getGenderThreshold(values.gender)
+            hasAnemia = hb != null && !Number.isNaN(hb) ? hb < threshold : false
+          }
+      
+          const hb = values.hemoglobin != null ? parseFloat(values.hemoglobin) : null
+          const severity = result?.severity || getSeverityFromHb(hb, values.gender)
+          const type = hasAnemia ? result?.type || result?.anemia_type || getTypeFromIndices(values) || 'Unable to classify' : 'No further classification required'
+      
+          const commonType = hasAnemia ? result?.common_type || getCommonType(type) : ''
+      
+          let precautions = []
+          let doctorAdvice = ''
+          let risks = ''
+          let simpleSummary = ''
+      
+          if (missingFields.length > 0) {
+            precautions = [`Some CBC values are missing: ${missingFields.join(', ')}.`, 'Please verify or enter them manually before relying on the result.']
+            doctorAdvice = 'Please confirm the missing values manually or upload a clearer report before making any medical interpretation.'
+            risks = 'Incomplete extraction can lead to incorrect interpretation if a result is forced without full CBC values.'
+            simpleSummary = 'The uploaded or entered data is incomplete. The platform is safely avoiding unreliable prediction.'
+          } else if (!hasAnemia) {
+            precautions = ['Maintain a balanced diet.', 'Stay hydrated and continue routine health checkups.']
+            doctorAdvice = 'If symptoms still persist despite a normal screening result, consult a doctor for further evaluation.'
+            risks = 'No anemia is indicated from the current screening values.'
+            simpleSummary = `No anemia is detected based on the current available values. Hemoglobin is ${hb ?? '--'}.`
+          } else {
+            precautions = ['Take a balanced diet and follow doctor guidance.', 'Do not start medicine on your own without proper evaluation.']
+      
+            if (String(type).toLowerCase().includes('microcytic')) {
+              precautions.push('This pattern commonly needs evaluation for iron deficiency, chronic blood loss, nutritional deficiency, or thalassemia screening depending on history.')
+            }
+            if (String(type).toLowerCase().includes('macrocytic')) {
+              precautions.push('This pattern may need evaluation of vitamin B12 and folate status along with diet review.')
+            }
+            if (String(type).toLowerCase().includes('normocytic')) {
+              precautions.push('This pattern may need further evaluation for underlying illness, kidney issues, blood loss, or chronic disease.')
+            }
+      
+            if (severity === 'Mild') {
+              doctorAdvice = 'Consult a doctor within a few days to one week for confirmation, cause evaluation, and diet or medicine advice.'
+              risks = 'Mild anemia may cause tiredness, weakness, low concentration, headache, or reduced stamina.'
+            } else if (severity === 'Moderate') {
+              doctorAdvice = 'Consult a doctor within 24 to 72 hours for proper clinical evaluation, repeat tests if needed, and treatment planning.'
+              risks = 'Moderate anemia can lead to marked fatigue, dizziness, palpitations, reduced oxygen delivery, and worsening weakness.'
+            } else if (severity === 'Severe') {
+              doctorAdvice = 'Urgent medical consultation is needed as early as possible, preferably the same day.'
+              risks = 'Severe anemia can become dangerous and may cause significant breathlessness, palpitations, fainting, poor oxygen delivery, and emergency complications.'
+            } else {
+              doctorAdvice = 'Consult a doctor for confirmation and cause-specific treatment.'
+              risks = 'Anemia may cause fatigue, weakness, dizziness, paleness, poor concentration, and reduced work capacity.'
+            }
+      
+            simpleSummary = `Anemia is detected from the current screening values. Severity: ${severity}. Classification: ${type}. Common likely type: ${commonType}. Hemoglobin: ${hb ?? '--'}.`
+          }
+      
+          return {
+            precautions: precautions.join('\n'),
+            doctor: doctorAdvice,
+            risks: risks,
+            summary: result?.summary || simpleSummary
+          }
+        }
+      
+        function updateResultDashboard(result = {}, values = {}, missingFields = []) {
+          const normalizedValues = {
+            hemoglobin: values.hemoglobin ?? patientData.hemoglobin,
+            mcv: values.mcv ?? patientData.mcv,
+            mch: values.mch ?? patientData.mch,
+            mchc: values.mchc ?? patientData.mchc,
+            rbc: values.rbc ?? patientData.rbc,
+            pcv: values.pcv ?? patientData.pcv,
+            rdw: values.rdw ?? patientData.rdw,
+            gender: values.gender ?? patientData.gender,
+            wbc: values.wbc ?? patientData.wbc,
+            platelets: values.platelets ?? patientData.platelets,
+            age: values.age ?? patientData.age
+          }
+      
+          patientData = { ...patientData, ...normalizedValues }
+      
+          const hb = normalizedValues.hemoglobin != null ? parseFloat(normalizedValues.hemoglobin) : null
+          const threshold = String(normalizedValues.gender || '').toLowerCase() === 'male' ? 13 : 12
+      
+          let hasAnemia
+          if (typeof result?.has_anemia === 'boolean') {
+            hasAnemia = result.has_anemia
+          } else {
+            hasAnemia = hb != null && !Number.isNaN(hb) ? hb < threshold : false
+          }
+      
+          const prediction = result.prediction || (hasAnemia ? 'Anemia Detected' : 'No Anemia Detected')
+          const severity = hasAnemia ? result.severity || getSeverityFromHb(hb, normalizedValues.gender) : ''
+          const type = hasAnemia ? result.anemia_type || result.type || getTypeFromIndices(normalizedValues) : ''
+          const commonType = hasAnemia ? result.common_type || getCommonType(type) : ''
+      
+          safeSetText('predictionCard', prediction)
+          safeSetText('severityCard', severity || '--')
+          safeSetText('typeCard', hasAnemia ? `${type}${commonType ? ` (${commonType})` : ''}` : '--')
+          safeSetText('confidenceCard', '--')
+      
+          const severityCard = document.getElementById('severityCard')
+          const typeCard = document.getElementById('typeCard')
+          const confidenceCard = document.getElementById('confidenceCard')
+      
+          if (hasAnemia) {
+            if (severityCard && severityCard.parentElement) severityCard.parentElement.style.display = 'block'
+            if (typeCard && typeCard.parentElement) typeCard.parentElement.style.display = 'block'
+            if (confidenceCard && confidenceCard.parentElement) confidenceCard.parentElement.style.display = 'none'
+          } else {
+            if (severityCard && severityCard.parentElement) severityCard.parentElement.style.display = 'none'
+            if (typeCard && typeCard.parentElement) typeCard.parentElement.style.display = 'none'
+            if (confidenceCard && confidenceCard.parentElement) confidenceCard.parentElement.style.display = 'none'
+          }
+      
+          const guidance = buildGuidance({ ...result, prediction, severity, type, common_type: commonType, has_anemia: hasAnemia }, normalizedValues, missingFields)
+      
+          guideText.precautions = guidance.precautions
+          guideText.doctor = guidance.doctor
+          guideText.risks = guidance.risks
+          guideText.summary = guidance.summary
+      
+          safeSetText('summaryBox', guideText.summary)
+          showGuide(currentGuideKey)
+        }
+      
+        function updateManualPreview() {
+          safeSetText('hbValue', patientData.hemoglobin ?? '--')
+          safeSetText('mcvValue', patientData.mcv ?? '--')
+          safeSetText('mchValue', patientData.mch ?? '--')
+          safeSetText('mchcValue', patientData.mchc ?? '--')
+          safeSetText('rbcValue', patientData.rbc ?? '--')
+          safeSetText('pcvValue', patientData.pcv ?? '--')
+          safeSetText('rdwValue', patientData.rdw ?? '--')
+          safeSetText('genderValue', formatGender(patientData.gender))
+          safeSetText('otherValue', `${patientData.wbc ?? '--'} / ${patientData.platelets ?? '--'}`)
+      
+          if (patientData.hemoglobin !== null && patientData.gender) {
+            const hb = parseFloat(patientData.hemoglobin)
+            const gender = String(patientData.gender).toLowerCase()
+            const threshold = getGenderThreshold(gender)
+            const hasAnemia = hb < threshold
+            const severity = hasAnemia ? getSeverityFromHb(hb, gender) : 'Normal'
+            const type = hasAnemia ? getTypeFromIndices(patientData) : 'No further classification required'
+            const commonType = hasAnemia ? getCommonType(type) : ''
+      
+            safeSetText('predictionCard', hasAnemia ? 'Anemia Detected' : 'No Anemia')
+            safeSetText('severityCard', hasAnemia ? severity : '--')
+            safeSetText('typeCard', hasAnemia ? `${type}${commonType ? ` (${commonType})` : ''}` : '--')
+            safeSetText('confidenceCard', '--')
+      
+            const previewResult = {
+              has_anemia: hasAnemia,
+              prediction: hasAnemia ? 'Anemia Detected' : 'No Anemia',
+              severity: severity,
+              type: hasAnemia ? type : 'No further classification required',
+              common_type: commonType,
+              hemoglobin: hb,
+              summary: `Preview result: Hemoglobin is ${hb} g/dL for ${formatGender(gender)}. ${hasAnemia ? `Possible anemia detected. Severity appears ${severity}. Classification appears ${type}. Common likely type appears ${commonType}.` : 'No anemia indicated from the currently entered values.'}`
+            }
+      
+            const guidance = buildGuidance(previewResult, patientData)
+            safeSetText('summaryBox', previewResult.summary)
+            guideText.precautions = guidance.precautions
+            guideText.doctor = guidance.doctor
+            guideText.risks = guidance.risks
+            guideText.summary = guidance.summary
+            showGuide(currentGuideKey)
+      
+            safeSetText('statusBox', 'Manual values updated in dashboard preview.')
+          } else {
+            safeSetText('predictionCard', '--')
+            safeSetText('severityCard', '--')
+            safeSetText('typeCard', '--')
+            safeSetText('confidenceCard', '--')
+          }
+        }
+      
+        function loadStep() {
+          if (currentStep < 0 || currentStep >= manualSteps.length) return
+      
+          const step = manualSteps[currentStep]
+          if (questionText) questionText.textContent = step.question
+          if (manualNote) manualNote.textContent = `Provide ${step.label}${step.required ? ' (required)' : ' (optional)'}.`
+      
+          if (step.type === 'select') {
+            answerInput.classList.add('hidden')
+            answerInput.disabled = true
+            genderSelect.classList.remove('hidden')
+            genderSelect.disabled = false
+            genderSelect.value = patientData[step.key] ? formatGender(patientData[step.key]) : ''
+            genderSelect.focus()
+          } else {
+            genderSelect.classList.add('hidden')
+            genderSelect.disabled = true
+            answerInput.classList.remove('hidden')
+            answerInput.disabled = false
+            answerInput.placeholder = step.placeholder || ''
+            answerInput.value = patientData[step.key] ?? ''
+            answerInput.focus()
+          }
+      
+          updateProgress()
+          speak(step.question)
+        }
+      
+        function startManualFlow() {
+          currentStep = 0
+          startManualBtn.classList.add('hidden')
+          nextStepBtn.classList.remove('hidden')
+          nextStepBtn.disabled = false
+          loadStep()
+          safeSetText('statusBox', 'Manual analysis started. Enter the requested values step by step.')
+          addAssistantMessage('Manual Analysis', 'Guided CBC input started.')
+        }
+      
+        function resetManualFlow() {
+          currentStep = -1
+          patientData = {
+            hemoglobin: null,
+            mcv: null,
+            mch: null,
+            mchc: null,
+            gender: null,
+            rbc: null,
+            pcv: null,
+            rdw: null,
+            wbc: null,
+            platelets: null,
+            age: null
+          }
+      
+          if (questionText) questionText.textContent = 'Click “Start Manual Analysis” to begin guided entry'
+          if (manualNote) manualNote.textContent = 'The system will request values step by step and move forward only after valid input.'
+      
+          answerInput.value = ''
+          answerInput.disabled = true
+          answerInput.classList.remove('hidden')
+          answerInput.placeholder = 'Type the requested value here'
+      
+          genderSelect.value = ''
+          genderSelect.classList.add('hidden')
+          genderSelect.disabled = true
+      
+          if (startManualBtn) startManualBtn.classList.remove('hidden')
+          if (nextStepBtn) {
+            nextStepBtn.classList.add('hidden')
+            nextStepBtn.disabled = false
+          }
+      
+          if (reportFile) reportFile.value = ''
+          if (uploadFileName) uploadFileName.textContent = 'No file selected'
+      
+          safeSetText('statusBox', 'Ready to begin analysis. No active result yet.')
+          updateProgress()
+          updateManualPreview()
+          resetCardsAndGuides()
+        }
+      
+        async function submitManualToBackend() {
+          const payload = {
+            gender: patientData.gender ? String(patientData.gender).toLowerCase() : '',
+            hemoglobin: patientData.hemoglobin,
+            rbc: patientData.rbc,
+            wbc: patientData.wbc,
+            platelets: patientData.platelets,
+            mcv: patientData.mcv,
+            mch: patientData.mch,
+            mchc: patientData.mchc,
+            pcv: patientData.pcv,
+            rdw: patientData.rdw,
+            age: patientData.age
+          }
+      
+          if (!payload.gender || payload.hemoglobin === null || payload.hemoglobin === '') {
+            safeSetText('statusBox', 'Gender and Hemoglobin are required for analysis.')
+            addAssistantMessage('Manual Analysis Error', 'Please complete Gender and Hemoglobin before final analysis.')
+            nextStepBtn.disabled = false
+            return
+          }
+      
+          safeSetText('statusBox', 'Analyzing manual values...')
+          addAssistantMessage('Manual Analysis', 'Submitting manual values for final screening.')
+      
+          try {
+            const response = await fetch('/predict_manual', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            })
+      
+            const data = await response.json()
+            console.log('MANUAL RESPONSE:', data)
+      
+            const values = data.extracted_values || data.values || payload
+            const analysis = {
+              prediction: data.prediction || (data.analysis ? data.analysis.prediction : undefined),
+              severity: data.severity || (data.analysis ? data.analysis.severity : undefined),
+              type: data.type || data.anemia_type || (data.analysis ? data.analysis.type || data.analysis.anemia_type : undefined),
+              anemia_type: data.anemia_type || data.type || (data.analysis ? data.analysis.anemia_type || data.analysis.type : undefined),
+              common_type: data.common_type || (data.analysis ? data.analysis.common_type : undefined),
+              summary: data.summary || (data.analysis ? data.analysis.summary : ''),
+              precautions: data.precautions || (data.analysis ? data.analysis.precautions : []),
+              doctor_advice: data.doctor_advice || (data.analysis ? data.analysis.doctor_advice : ''),
+              risks: data.risks || (data.analysis ? data.analysis.risks : ''),
+              has_anemia: typeof data.has_anemia === 'boolean' ? data.has_anemia : (data.prediction || '').toLowerCase().includes('anemia') && !(data.prediction || '').toLowerCase().includes('no anemia')
+            }
+      
+            if (data.success && (!data.missing_fields || data.missing_fields.length === 0)) {
+              updateResultDashboard(analysis, values, [])
+              safeSetText('statusBox', data.message || 'Manual analysis completed successfully.')
+              addAssistantMessage('Manual Analysis Completed', `${analysis.prediction || 'Analysis completed'}. Severity: ${analysis.severity || 'Not available'}.`)
+              saveSession({
+                title: `Manual - ${analysis.prediction || 'Result'}`,
+                result: analysis,
+                values: values
+              })
+              speak(analysis.prediction || 'Manual analysis completed.')
+            } else {
+              updateResultDashboard(analysis, values, data.missing_fields || [])
+              safeSetText('statusBox', data.error || data.message || 'Manual analysis failed.')
+              addAssistantMessage('Manual Analysis Error', data.error || data.message || 'Unable to process manual data.')
+            }
+      
+            nextStepBtn.disabled = false
+          } catch (error) {
+            console.error(error)
+            safeSetText('statusBox', 'Manual analysis request failed.')
+            addAssistantMessage('System Error', error.message || 'Manual request failed.')
+            nextStepBtn.disabled = false
+          }
+        }
+      
+        async function submitStep() {
+          if (currentStep < 0 || currentStep >= manualSteps.length) return
+      
+          const step = manualSteps[currentStep]
+          const rawValue = step.type === 'select' ? genderSelect.value : answerInput.value.trim()
+      
+          if (!validateStepValue(step, rawValue)) {
+            safeSetText('statusBox', `Please enter a valid ${step.label}.`)
+            addAssistantMessage('Invalid Input', `The entered ${step.label} is not valid.`)
+            speak(`Please enter a valid ${step.label}`)
+            return
+          }
+      
+          if (step.type === 'select') {
+            patientData[step.key] = rawValue ? rawValue.toLowerCase() : null
+          } else {
+            patientData[step.key] = rawValue === '' ? null : parseFloat(rawValue)
+          }
+      
+          updateManualPreview()
+      
+          if (currentStep < manualSteps.length - 1) {
+            currentStep += 1
+            loadStep()
+            safeSetText('statusBox', `${step.label} saved successfully.`)
+            addAssistantMessage('Input Saved', `${step.label}: ${rawValue === '' ? 'Not provided' : rawValue}`)
+          } else {
+            nextStepBtn.disabled = true
+            await submitManualToBackend()
+          }
+        }
+      
+        async function analyzeUpload() {
+          const file = reportFile?.files?.[0]
+      
+          if (!file) {
+            safeSetText('statusBox', 'Please select a report file first.')
+            addAssistantMessage('Upload Required', 'Please choose a JPG, PNG, or PDF report before analysis.')
+            return
+          }
+      
+          const formData = new FormData()
+          formData.append('file', file)
+      
+          safeSetText('statusBox', 'Analyzing uploaded report...')
+          addAssistantMessage('Report Upload', `Analyzing file: ${file.name}`)
+      
+          try {
+            const response = await fetch('/predict_image', {
+              method: 'POST',
+              body: formData
+            })
+      
+            const data = await response.json()
+            console.log('UPLOAD RESPONSE:', data)
+      
+            const values = data.extracted_values || data.values || {}
+      
+            if (values.gender) patientData.gender = String(values.gender).toLowerCase()
+            if (values.age != null) patientData.age = values.age
+            if (values.hemoglobin != null) patientData.hemoglobin = values.hemoglobin
+            if (values.rbc != null) patientData.rbc = values.rbc
+            if (values.wbc != null) patientData.wbc = values.wbc
+            if (values.platelets != null) patientData.platelets = values.platelets
+            if (values.mcv != null) patientData.mcv = values.mcv
+            if (values.mch != null) patientData.mch = values.mch
+            if (values.mchc != null) patientData.mchc = values.mchc
+            if (values.pcv != null) patientData.pcv = values.pcv
+            if (values.rdw != null) patientData.rdw = values.rdw
+      
+            updateManualPreview()
+      
+            const analysis = {
+              prediction: data.prediction || (data.analysis ? data.analysis.prediction : undefined),
+              severity: data.severity || (data.analysis ? data.analysis.severity : undefined),
+              type: data.type || data.anemia_type || (data.analysis ? data.analysis.type || data.analysis.anemia_type : undefined),
+              anemia_type: data.anemia_type || data.type || (data.analysis ? data.analysis.anemia_type || data.analysis.type : undefined),
+              common_type: data.common_type || (data.analysis ? data.analysis.common_type : undefined),
+              summary: data.summary || (data.analysis ? data.analysis.summary : ''),
+              precautions: data.precautions || (data.analysis ? data.analysis.precautions : []),
+              doctor_advice: data.doctor_advice || (data.analysis ? data.analysis.doctor_advice : ''),
+              risks: data.risks || (data.analysis ? data.analysis.risks : ''),
+              has_anemia: typeof data.has_anemia === 'boolean' ? data.has_anemia : (data.prediction || '').toLowerCase().includes('anemia') && !(data.prediction || '').toLowerCase().includes('no anemia')
+            }
+      
+            if (data.success && (!data.missing_fields || data.missing_fields.length === 0)) {
+              updateResultDashboard(analysis, values, [])
+              safeSetText('statusBox', data.message || 'Report analyzed successfully.')
+              addAssistantMessage('Report Analysis Completed', `${analysis.prediction || 'Analysis completed'}. Severity: ${analysis.severity || 'Not available'}.`)
+              saveSession({
+                title: `Upload - ${analysis.prediction || 'Result'}`,
+                result: analysis,
+                values: values
+              })
+              speak(analysis.prediction || 'Report analysis completed.')
+            } else {
+              const errMsg = data.error || data.message || 'Report extraction incomplete.'
+              safeSetText('statusBox', errMsg)
+              addAssistantMessage('Extraction Partial', errMsg)
+              updateResultDashboard(analysis, values, data.missing_fields || [])
+      
+              console.log('EXTRACTED VALUES:', data.extracted_values || data.values || {})
+              console.log('MISSING FIELDS:', data.missing_fields || [])
+              console.log('RAW EXTRACTION:', data.raw_extraction || {})
+            }
+          } catch (error) {
+            console.error(error)
+            safeSetText('statusBox', 'Something went wrong while analyzing the uploaded report.')
+            addAssistantMessage('System Error', 'Something went wrong while analyzing the uploaded report.')
+          }
+        }
+      
+        if (modeTabs.length) {
+          modeTabs.forEach((tab) => {
+            tab.addEventListener('click', () => setMode(tab.dataset.mode))
+          })
+        }
+      
+        if (guideTabs.length) {
+          guideTabs.forEach((tab) => {
+            tab.addEventListener('click', () => showGuide(tab.dataset.guide))
+          })
+        }
+      
+        if (navButtons.length) {
+          navButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const text = btn.textContent.trim().toLowerCase()
+              if (text.includes('manual')) {
+                setMode('manual')
+              } else if (text.includes('report')) {
+                setMode('upload')
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }
+            })
+          })
+        }
+      
+        if (startManualFromHero) {
+          startManualFromHero.addEventListener('click', () => {
+            setMode('manual')
+            startManualFlow()
+          })
+        }
+      
+        if (startUploadFromHero) {
+          startUploadFromHero.addEventListener('click', () => {
+            setMode('upload')
+            safeSetText('statusBox', 'Upload mode selected. Please choose a report file.')
+          })
+        }
+      
+        if (reportFile) {
+          reportFile.addEventListener('change', function () {
+            if (uploadFileName) {
+              uploadFileName.textContent = this.files.length ? this.files[0].name : 'No file selected'
+            }
+          })
+        }
+      
+        if (startManualBtn) startManualBtn.addEventListener('click', startManualFlow)
+        if (nextStepBtn) nextStepBtn.addEventListener('click', submitStep)
+        if (resetManualBtn) resetManualBtn.addEventListener('click', resetManualFlow)
+        if (analyzeUploadBtn) analyzeUploadBtn.addEventListener('click', analyzeUpload)
+      
+        if (newAnalysisBtn) {
+          newAnalysisBtn.addEventListener('click', () => {
+            setMode('manual')
+            resetManualFlow()
+          })
+        }
+      
+        if (answerInput) {
+          answerInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && nextStepBtn && !nextStepBtn.classList.contains('hidden')) {
+              submitStep()
+            }
+          })
+        }
+      
+        if (genderSelect) {
+          genderSelect.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && nextStepBtn && !nextStepBtn.classList.contains('hidden')) {
+              submitStep()
+            }
+          })
+        }
+      
+        if (voiceToggleBtn) {
+          voiceToggleBtn.addEventListener('click', function () {
+            voiceEnabled = !voiceEnabled
+            voiceToggleBtn.textContent = `Voice: ${voiceEnabled ? 'On' : 'Off'}`
+            if (!voiceEnabled && 'speechSynthesis' in window) {
+              window.speechSynthesis.cancel()
+            }
+          })
+        }
+      
+        if (shareBtn) {
+          shareBtn.addEventListener('click', async function () {
+            const text = `
+                                                                                                                                                                                                                              AI-Based Anemia Detection Platform
+                                                                                                                                                                                                                              
+                                                                                                                                                                                                                              Prediction: ${document.getElementById('predictionCard')?.textContent || '--'}
+                                                                                                                                                                                                                              Severity: ${document.getElementById('severityCard')?.textContent || '--'}
+                                                                                                                                                                                                                              Likely Type: ${document.getElementById('typeCard')?.textContent || '--'}
+                                                                                                                                                                                                                              
+                                                                                                                                                                                                                              Summary:
+                                                                                                                                                                                                                              ${document.getElementById('summaryBox')?.textContent || '--'}
+                                                                                                                                                                                                                                    `.trim()
+      
+            try {
+              await navigator.clipboard.writeText(text)
+              alert('Analysis summary copied successfully.')
+            } catch (error) {
+              alert('Unable to copy the analysis summary.')
+            }
+          })
+        }
+      
+        safeSetText('confidenceCard', '--')
+        renderHistory()
+        resetManualFlow()
+        window.showGuide = showGuide
+      })
+    </script>
+  </body>
+</html>

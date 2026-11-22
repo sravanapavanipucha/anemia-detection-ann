@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | AI-Based Anemia Detection Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.14), transparent 24%),
+        linear-gradient(135deg, #0f172a, #111827 55%, #0b1220);
+      padding: 24px;
+    }
+
+    .login-shell {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 28px;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.30);
+    }
+
+    .login-left {
+      padding: 56px 48px;
+      color: white;
+      position: relative;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 22%),
+        linear-gradient(160deg, rgba(37, 99, 235, 0.18), rgba(6, 182, 212, 0.10));
+    }
+
+    .logo-badge {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      box-shadow: 0 14px 32px rgba(37, 99, 235, 0.28);
+      font-size: 28px;
+      margin-bottom: 24px;
+    }
+
+    .platform-tag {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+    }
+
+    .login-left h1 {
+      font-size: 38px;
+      line-height: 1.18;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.03em;
+    }
+
+    .login-left p {
+      color: rgba(255,255,255,0.78);
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.10);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .feature-item strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .feature-item span {
+      color: rgba(255,255,255,0.72);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .login-right {
+      background: #ffffff;
+      padding: 52px 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card h2 {
+      font-size: 30px;
+      color: #0f172a;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .login-card .subtext {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 52px;
+      border: 1px solid #dbe3ee;
+      border-radius: 16px;
+      padding: 0 16px;
+      font-size: 15px;
+      color: #0f172a;
+      background: #f8fafc;
+      outline: none;
+      transition: all 0.22s ease;
+    }
+
+    .form-input:focus {
+      background: white;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 54px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+      transition: all 0.22s ease;
+      margin-top: 6px;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.97;
+    }
+
+    .error-box {
+      margin-bottom: 18px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #be123c;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .footer-note strong {
+      color: #0f172a;
+    }
+
+    @media (max-width: 920px) {
+      .login-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .login-left {
+        padding: 40px 28px;
+      }
+
+      .login-right {
+        padding: 38px 24px;
+      }
+
+      .login-left h1 {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .login-left,
+      .login-right {
+        padding: 28px 18px;
+      }
+
+      .login-card h2 {
+        font-size: 26px;
+      }
+
+      .login-left h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-left">
+      <div class="logo-badge">🩸</div>
+      <div class="platform-tag">AI HEALTHCARE PLATFORM</div>
+      <h1>Login for the Anemia Detection Platform</h1>
+      <p>
+        Securely access your AI-based anemia screening workspace for CBC analysis,
+        lab report upload, clinical summary generation, and structured guidance.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div>
+            <strong>Smart Screening Dashboard</strong>
+            <span>Access guided CBC input, result overview, summary cards, and support panels.</span>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">📄</div>
+          <div>
+            <strong>Lab Report Analysis</strong>
+            <span>Upload CBC reports and analyze extracted values through the same platform.</span>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🧠</div>
+          <div>
+            <strong>AI-Style Guidance</strong>
+            <span>View severity-aware explanations, maintenance tips, risks, and doctor advice.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="login-card">
+        <h2>Sign In</h2>
+        <p class="subtext">
+          Enter your credentials to continue to the anemia detection dashboard.
+        </p>
+
+        {% if error %}
+        <div class="error-box">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/login">
+          <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-input"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="login-btn">Login to Dashboard</button>
+        </form>
+
+        <div class="footer-note">
+  Don’t have an account?
+  <a href="/signup" style="color:#2563eb; font-weight:700;">Sign up</a>
+</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

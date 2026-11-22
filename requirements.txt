@@ -7,3 +7,4 @@ pytesseract
 werkzeug
 paddleocr
 gunicorn
+python-dotenv

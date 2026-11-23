@@ -185,7 +185,7 @@ Then open the app in your browser at `http://127.0.0.1:5000/`
 
 You can try the deployed version of the application here 🚀:
 
-[**Anemia Detection App**](https://anemia-detection-46ji.onrender.com)
+[**Anemia Detection App**](https://anemia-detection-ann.onrender.com)
 
 <img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="400">
 
